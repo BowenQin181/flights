@@ -1,0 +1,30 @@
+flat_first.Rmd:
+  path: dev/flat_first.Rmd
+  state: active
+  R: R/first.R
+  tests: tests/testthat/test-first.R
+  vignettes: vignettes/minimal.Rmd
+  inflate:
+    flat_file: dev/flat_first.Rmd
+    vignette_name: Minimal
+    open_vignette: true
+    check: true
+    document: true
+    overwrite: ask
+    clean: ask
+flat_penguins.Rmd:
+  path: dev/flat_penguins.Rmd
+  state: active
+  R:
+  - R/plot_island.R
+  - R/table_island.R
+  tests: tests/testthat/test-table_island.R
+  vignettes: vignettes/table-by-islands.Rmd
+  inflate:
+    flat_file: dev/flat_penguins.Rmd
+    vignette_name: Table by islands
+    open_vignette: true
+    check: true
+    document: true
+    overwrite: 'yes'
+    clean: ask

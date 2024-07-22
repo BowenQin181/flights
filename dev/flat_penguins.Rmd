@@ -1,0 +1,108 @@
+---
+title: "Penguins"
+output: html_document
+date: "2024-07-22"
+---
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+<!--
+ You need to run the 'description' chunk in the '0-dev_history.Rmd' file before continuing your code there.
+-->
+
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+# load data
+
+```{r}
+penguins <- palmerpenguins::penguins
+```
+
+
+# get table by island
+
+```{r function-table by island}
+#' get table by island
+#'
+#' @return table
+#' @export
+#' @param data Optional: the dataset to be used
+#' @param island which island to glance
+#' @importFrom dplyr filter summarise n group_by
+#' @importFrom flextable flextable autofit
+#' @importFrom stringr str_glue
+#' @examples
+table_island <- function(data, island) {
+  all_island = unique(data$island)
+  if (island %in% all_island) {
+    data %>% 
+      filter(island == island) %>% 
+      group_by(island, species) %>% 
+      summarise(N = n(), 
+               avg_bill_length = mean(bill_length_mm, na.rm = TRUE),
+               avg_bill_depth = mean(bill_depth_mm, na.rm = TRUE)) %>% 
+      flextable() %>% 
+      autofit()
+  } else {
+    stop(str_glue("There isn't any island called {island}"))
+  }
+}
+```
+
+```{r examples-table by island}
+penguins <- palmerpenguins::penguins
+table_island(data = penguins, island = "Torgersen")
+table_island(data = penguins, island = "Dream")
+```
+
+```{r tests-first}
+
+test_that("works", {
+  expect_true(inherits(table_island, "function"))
+  expect_error(table_island(data = palmerpenguins::penguins, island = "XXiasnhg2999"))
+})
+```
+
+
+
+# Draw plot for each island
+
+
+```{r function-plot_island}
+#' plot_island Draw a scatter plot for the island.
+#' @importFrom hrbrthemes theme_ipsum_rc
+#' @importFrom ggplot2 aes ggplot geom_point ggtitle
+#' @param data Optional: the datatset used to draw.
+#' @param island island's name
+#' @export
+#' @return A ggplot picture
+
+
+plot_island <- function(data, island) {
+  all_island = unique(data$island)
+  if (island %in% all_island) {
+    data %>% 
+      filter(island == island) %>% 
+      ggplot(aes(x = bill_length_mm, y = bill_depth_mm, colour = species)) +
+      geom_point(size = 3) +
+      ggtitle(str_glue("Island: {island}"))
+      theme_ipsum_rc()
+  } else {
+    stop(str_glue("There isn't any island called {island}"))
+  }
+}
+```
+
+
+```{r examples-plot_island, eval=FALSE}
+\dontrun{
+  plot_island(data = palmerpenguins::penguins,
+              island = "Dream")
+}
+```
+
